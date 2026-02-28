@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Local env (API keys, Firebase config)
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+
+# Local documentation (not committed)
+docs/
+
+# Editor / OS
+.DS_Store
+*.log
