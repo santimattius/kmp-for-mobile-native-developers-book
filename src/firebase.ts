@@ -51,6 +51,8 @@ export async function initFirebase(): Promise<{ app: FirebaseApp | null; analyti
     ads_enabled: true,
     show_amazon: false,
   };
+  // Permitir que los cambios en la consola se reflejen antes (por defecto 12 h de caché)
+  remoteConfig.settings.minimumFetchIntervalMillis = 60 * 1000; // 1 minuto
   const supported = await isSupported();
   if (supported) {
     analytics = getAnalytics(app);

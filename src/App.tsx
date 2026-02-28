@@ -187,9 +187,15 @@ export default function App() {
   const [remoteFlags, setRemoteFlags] = useState<RemoteConfigFlags | null>(null);
 
   useEffect(() => {
-    getRemoteConfigFlags().then((flags) => {
-      if (flags) setRemoteFlags(flags);
-    });
+    const loadFlags = () => {
+      getRemoteConfigFlags().then((flags) => {
+        if (flags) setRemoteFlags(flags);
+      });
+    };
+    loadFlags();
+    // Reintentar por si Firebase aún no había terminado de inicializar
+    const t = window.setTimeout(loadFlags, 2000);
+    return () => window.clearTimeout(t);
   }, []);
 
   const showAmazon = remoteFlags?.showAmazon ?? showAmazonEnv;
