@@ -304,7 +304,7 @@ export default function App() {
           >
             <div className="relative w-full max-w-md aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group">
               <img 
-                src="/book-cover.png" 
+                src={`${import.meta.env.BASE_URL}book-cover.png`} 
                 alt="KMP for Mobile Native Developers Book Cover" 
                 className="w-full h-full object-contain p-4"
               />
