@@ -8,3 +8,9 @@
   --color-background-light: #f6f6f8;
   --color-background-dark: #101622;
 }
+
+/* Safe area for notched devices (mobile) */
+.safe-area-padding {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}

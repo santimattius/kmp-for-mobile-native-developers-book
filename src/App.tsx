@@ -18,7 +18,9 @@ import {
   Github,
   MessageSquare,
   Star,
-  Send
+  Send,
+  Menu,
+  X
 } from 'lucide-react';
 import { getFirebaseApp, submitFeedback, getRemoteConfigFlags, type RemoteConfigFlags } from './firebase';
 import { AdSlot, isAdsEnabled } from './ads';
@@ -185,6 +187,7 @@ const REPOSITORIES = [
 
 export default function App() {
   const [isChaptersOpen, setIsChaptersOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [remoteFlags, setRemoteFlags] = useState<RemoteConfigFlags | null>(null);
 
   useEffect(() => {
@@ -205,14 +208,15 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background-light text-slate-900 font-sans selection:bg-primary/20">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BookOpen className="text-primary w-8 h-8" />
-            <h2 className="text-lg font-bold tracking-tight hidden md:block">KMP for Mobile Native Developers</h2>
+      <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md safe-area-padding">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <BookOpen className="text-primary w-7 h-7 sm:w-8 sm:h-8 shrink-0" />
+            <h2 className="text-base sm:text-lg font-bold tracking-tight truncate hidden sm:block">KMP for Mobile Native Developers</h2>
           </div>
-          <nav className="flex items-center gap-8">
-            <div className="hidden lg:flex items-center gap-6">
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-8">
+            <div className="flex items-center gap-6">
               <a href="#introduction" className="text-sm font-medium hover:text-primary transition-colors">Introduction</a>
               <div className="relative group">
                 <button 
@@ -273,32 +277,95 @@ export default function App() {
               </a>
             </div>
           </nav>
+          {/* Mobile: hamburger + CTA */}
+          <div className="flex lg:hidden items-center gap-2">
+            {showAmazon && (
+              <a
+                href={AMAZON_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex bg-slate-200 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-300"
+              >
+                Amazon
+              </a>
+            )}
+            <a
+              href={LEANPUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-primary text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold hover:brightness-110 shadow-lg shadow-primary/20"
+            >
+              Leanpub
+            </a>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary transition-colors"
+              aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
+        {/* Mobile menu panel */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden overflow-hidden border-t border-slate-200 bg-white"
+            >
+              <nav className="px-4 py-4 space-y-1 max-h-[70vh] overflow-y-auto">
+                <a href="#introduction" className="block py-3 text-slate-700 font-medium hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>Introduction</a>
+                <a href="#table-of-contents" className="block py-3 text-slate-700 font-medium hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>Table of Contents</a>
+                <a href="#feedback" className="block py-3 text-slate-700 font-medium hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>Feedback</a>
+                <a href="#repositories" className="block py-3 text-slate-700 font-medium hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>Repositories</a>
+                <div className="border-t border-slate-100 pt-3 mt-3">
+                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Chapters</p>
+                  <div className="grid grid-cols-1 gap-0.5 max-h-48 overflow-y-auto">
+                    {CHAPTERS.map((chapter) => (
+                      <a
+                        key={chapter.id}
+                        href={`#${chapter.id}`}
+                        className="py-2 text-sm text-slate-600 hover:text-primary truncate"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {chapter.number}. {chapter.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-12 md:py-20">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-20">
         {/* Hero Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center mb-20 sm:mb-32">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col gap-8 order-2 lg:order-1"
+            className="flex flex-col gap-6 sm:gap-8 order-2 lg:order-1"
           >
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider rounded-full">New Release 2026</span>
-              <h1 className="text-5xl md:text-6xl font-black leading-tight tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tight">
                 KMP for Mobile Native Developers
               </h1>
-              <p className="text-xl text-slate-600 leading-relaxed max-w-xl">
+              <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-xl">
                 Master Kotlin Multiplatform for modern mobile native development. Build shared logic across iOS and Android with ease without sacrificing native performance.
               </p>
             </div>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <a
                 href={LEANPUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-14 px-8 bg-primary text-white rounded-xl text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 flex items-center gap-2"
+                className="h-12 sm:h-14 px-6 sm:px-8 bg-primary text-white rounded-xl text-base sm:text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 flex items-center gap-2"
               >
                 Get on Leanpub <Rocket className="w-5 h-5" />
               </a>
@@ -307,7 +374,7 @@ export default function App() {
                   href={AMAZON_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-14 px-8 bg-white border border-slate-200 rounded-xl text-lg font-bold hover:bg-slate-50 transition-all flex items-center gap-2"
+                  className="h-12 sm:h-14 px-6 sm:px-8 bg-white border border-slate-200 rounded-xl text-base sm:text-lg font-bold hover:bg-slate-50 transition-all flex items-center gap-2"
                 >
                   Buy on Amazon <ShoppingCart className="w-5 h-5" />
                 </a>
@@ -323,23 +390,23 @@ export default function App() {
               <img 
                 src={`${import.meta.env.BASE_URL}book-cover.png`} 
                 alt="KMP for Mobile Native Developers Book Cover" 
-                className="w-full h-full object-contain p-4"
+                className="w-full h-full object-contain p-4 sm:p-6"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent text-white">
-                <p className="text-sm font-medium opacity-80 uppercase tracking-widest">A comprehensive guide</p>
-                <p className="text-2xl font-bold">The definitive KMP handbook</p>
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8 bg-gradient-to-t from-black/80 to-transparent text-white">
+                <p className="text-xs sm:text-sm font-medium opacity-80 uppercase tracking-widest">A comprehensive guide</p>
+                <p className="text-xl sm:text-2xl font-bold">The definitive KMP handbook</p>
               </div>
             </div>
           </motion.div>
         </section>
 
         {/* Introduction Section */}
-        <section id="introduction" className="max-w-3xl mx-auto mb-32 scroll-mt-24">
+        <section id="introduction" className="max-w-3xl mx-auto mb-20 sm:mb-32 scroll-mt-24">
           <div className="flex items-center gap-3 text-primary mb-4">
-            <Info className="w-5 h-5" />
+            <Info className="w-5 h-5 shrink-0" />
             <h3 className="font-bold uppercase tracking-widest text-sm">Introduction</h3>
           </div>
-          <h2 className="text-3xl font-bold mb-6">A new era for native development</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">A new era for native development</h2>
           <div className="prose prose-lg text-slate-600 space-y-6">
             <p>
               Building mobile software today means balancing two opposing forces. On one side, the need for <strong>speed and consistency</strong> across platforms as products grow, teams scale, and business rules must behave the same way on Android and iOS. On the other, the need to stay truly native, with polished experiences, idiomatic APIs on each platform, and technical decisions that do not compromise long-term quality.
@@ -354,17 +421,17 @@ export default function App() {
         </section>
 
         {/* Table of Contents */}
-        <section id="table-of-contents" className="mb-32 scroll-mt-24">
-          <h2 className="text-4xl font-black mb-12 text-center">Table of Contents</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section id="table-of-contents" className="mb-20 sm:mb-32 scroll-mt-24">
+          <h2 className="text-3xl sm:text-4xl font-black mb-8 sm:mb-12 text-center">Table of Contents</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {CHAPTERS.map((chapter) => (
               <a 
                 key={chapter.id}
                 href={`#${chapter.id}`} 
-                className="p-6 bg-white border border-slate-200 rounded-xl hover:border-primary transition-all group"
+                className="p-4 sm:p-6 bg-white border border-slate-200 rounded-xl hover:border-primary transition-all group"
               >
                 <span className="text-primary font-bold block mb-2">Chapter {chapter.number}</span>
-                <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{chapter.title}</h3>
+                <h3 className="text-lg sm:text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">{chapter.title}</h3>
               </a>
             ))}
           </div>
@@ -381,7 +448,7 @@ export default function App() {
         )}
 
         {/* Detailed Chapters */}
-        <section className="space-y-16 max-w-4xl mx-auto mb-32">
+        <section className="space-y-10 sm:space-y-16 max-w-4xl mx-auto mb-20 sm:mb-32">
           {CHAPTERS.map((chapter) => (
             <Chapter 
               key={chapter.id}
@@ -409,7 +476,7 @@ export default function App() {
         )}
 
         {/* Feedback Section */}
-        <section id="feedback" className="scroll-mt-24 max-w-2xl mx-auto mb-32">
+        <section id="feedback" className="scroll-mt-24 sm:scroll-mt-32 max-w-2xl mx-auto mb-20 sm:mb-32 px-0 sm:px-0">
           <div className="flex items-center gap-3 text-primary mb-4">
             <MessageSquare className="w-5 h-5" />
             <h3 className="font-bold uppercase tracking-widest text-sm">Feedback</h3>
@@ -422,19 +489,19 @@ export default function App() {
         </section>
 
         {/* Final CTA & Repositories Section */}
-        <section id="repositories" className="scroll-mt-24 p-12 bg-primary rounded-3xl text-white text-center relative overflow-hidden">
+        <section id="repositories" className="scroll-mt-24 p-6 sm:p-8 md:p-12 bg-primary rounded-2xl sm:rounded-3xl text-white text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-blue-600 to-indigo-800 opacity-50"></div>
-          <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-            <h2 className="text-4xl font-black">Ready to level up?</h2>
-            <p className="text-xl text-blue-100">
+          <div className="relative z-10 max-w-3xl mx-auto space-y-6 sm:space-y-8">
+            <h2 className="text-3xl sm:text-4xl font-black">Ready to level up?</h2>
+            <p className="text-base sm:text-xl text-blue-100">
               Get access to in-depth technical content, practical code samples, and ongoing community updates.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
               <a
                 href={LEANPUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-14 px-10 bg-white text-primary rounded-xl text-lg font-bold hover:bg-slate-100 transition-all shadow-xl"
+                className="h-12 sm:h-14 px-6 sm:px-10 bg-white text-primary rounded-xl text-base sm:text-lg font-bold hover:bg-slate-100 transition-all shadow-xl"
               >
                 Get on Leanpub
               </a>
@@ -443,15 +510,15 @@ export default function App() {
                   href={AMAZON_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-14 px-10 bg-primary border-2 border-white/30 text-white rounded-xl text-lg font-bold hover:bg-white/10 transition-all"
+                  className="h-12 sm:h-14 px-6 sm:px-10 bg-white text-slate-800 rounded-xl text-base sm:text-lg font-bold hover:bg-slate-100 transition-all shadow-xl border border-slate-200"
                 >
                   Buy on Amazon
                 </a>
               )}
             </div>
-            <div className="pt-12 mt-12 border-t border-white/10 flex flex-col items-center gap-6">
-              <h3 className="text-xl font-bold">Open Source Repositories</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <div className="pt-8 sm:pt-12 mt-8 sm:mt-12 border-t border-white/10 flex flex-col items-center gap-4 sm:gap-6">
+              <h3 className="text-lg sm:text-xl font-bold">Open Source Repositories</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 w-full">
                 {REPOSITORIES.map((repo, i) => (
                   <a 
                     key={i} 
@@ -474,8 +541,8 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-slate-200 text-center">
-        <p className="text-slate-500 text-sm">
+      <footer className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 border-t border-slate-200 text-center">
+        <p className="text-slate-500 text-xs sm:text-sm">
           © 2026 Kotlin Multiplatform for Native Developers. All rights reserved. <br className="md:hidden"/>
           Built with Inter and Lucide Icons.
         </p>
@@ -620,21 +687,21 @@ function Chapter(props: ChapterProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <article id={id} className="scroll-mt-32 p-8 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+    <article id={id} className="scroll-mt-24 sm:scroll-mt-32 p-4 sm:p-8 bg-white border border-slate-200 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">
         <h4 className="text-sm font-bold text-primary uppercase tracking-tighter">Chapter {number}</h4>
-        <button className="p-2 text-slate-400 hover:text-primary transition-colors">
+        <button className="p-2 text-slate-400 hover:text-primary transition-colors touch-manipulation">
           <LinkIcon className="w-5 h-5" />
         </button>
       </div>
-      <h3 className="text-3xl font-bold mb-4">{title}</h3>
-      <p className="text-slate-600 leading-relaxed mb-8">
+      <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">{title}</h3>
+      <p className="text-slate-600 leading-relaxed text-sm sm:text-base mb-6 sm:mb-8">
         {description}
       </p>
-      <div className="border-t border-slate-100 pt-6">
+      <div className="border-t border-slate-100 pt-4 sm:pt-6">
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between w-full text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+          className="flex items-center justify-between w-full text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors py-1 touch-manipulation"
         >
           <span>VIEW CHAPTER REFERENCES ({references.length})</span>
           {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
