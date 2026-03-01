@@ -173,6 +173,7 @@ const CHAPTERS = [
 ];
 
 const LEANPUB_URL = 'https://leanpub.com/kmp-for-mobile-native-developers';
+const AMAZON_URL = 'https://www.amazon.com/Mobile-Native-Developers-Santiago-Mattiauda/dp/B0DZPFS8S3';
 
 const REPOSITORIES = [
   { title: 'Book Sample App', url: 'https://github.com/santimattius/kmp-for-mobile-native-developers' },
@@ -253,9 +254,14 @@ export default function App() {
             </div>
             <div className="flex items-center gap-3">
               {showAmazon && (
-                <button className="hidden sm:inline-flex bg-slate-200 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-300 transition-colors">
+                <a
+                  href={AMAZON_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:inline-flex bg-slate-200 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-300 transition-colors"
+                >
                   Buy on Amazon
-                </button>
+                </a>
               )}
               <a
                 href={LEANPUB_URL}
@@ -297,9 +303,14 @@ export default function App() {
                 Get on Leanpub <Rocket className="w-5 h-5" />
               </a>
               {showAmazon && (
-                <button className="h-14 px-8 bg-white border border-slate-200 rounded-xl text-lg font-bold hover:bg-slate-50 transition-all flex items-center gap-2">
+                <a
+                  href={AMAZON_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-14 px-8 bg-white border border-slate-200 rounded-xl text-lg font-bold hover:bg-slate-50 transition-all flex items-center gap-2"
+                >
                   Buy on Amazon <ShoppingCart className="w-5 h-5" />
-                </button>
+                </a>
               )}
             </div>
           </motion.div>
@@ -428,9 +439,14 @@ export default function App() {
                 Get on Leanpub
               </a>
               {showAmazon && (
-                <button className="h-14 px-10 bg-primary border-2 border-white/30 text-white rounded-xl text-lg font-bold hover:bg-white/10 transition-all">
+                <a
+                  href={AMAZON_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-14 px-10 bg-primary border-2 border-white/30 text-white rounded-xl text-lg font-bold hover:bg-white/10 transition-all"
+                >
                   Buy on Amazon
-                </button>
+                </a>
               )}
             </div>
             <div className="pt-12 mt-12 border-t border-white/10 flex flex-col items-center gap-6">
